@@ -90,7 +90,16 @@ func handshake(c *websocket.Config, req *http.Request) error {
 		log.Println("bad websocket origin:", err)
 		return websocket.ErrBadWebSocketOrigin
 	}
-	ok := c.Origin.Scheme == o.Scheme && (c.Origin.Host == o.Host || c.Origin.Host == net.JoinHostPort(o.Host, port))
+	h1, p1, _ := net.SplitHostPort(c.Origin.Host)
+	h2, p2, _ := net.SplitHostPort(o.Host)
+	lhmap := map[string]string{
+		"127.0.0.1": "localhost",
+		"0.0.0.0":   "localhost",
+		"localhost": "localhost",
+	}
+	ok := c.Origin.Scheme == o.Scheme && (c.Origin.Host == o.Host ||
+		c.Origin.Host == net.JoinHostPort(o.Host, port) ||
+		lhmap[h1] == lhmap[h2] && p1 == p2)
 	if !ok {
 		log.Println("bad websocket origin:", o)
 		return websocket.ErrBadWebSocketOrigin
