@@ -82,17 +82,17 @@ func NewHandler(origin *url.URL) websocket.Server {
 func handshake(c *websocket.Config, req *http.Request) error {
 	o, err := websocket.Origin(c, req)
 	if err != nil {
-		log.Println("bad websocket origin:", err)
+		log.Println("0. bad websocket origin:", err)
 		return websocket.ErrBadWebSocketOrigin
 	}
 	_, port, err := net.SplitHostPort(c.Origin.Host)
 	if err != nil {
-		log.Println("bad websocket origin:", err)
+		log.Println("1. bad websocket origin:", err)
 		return websocket.ErrBadWebSocketOrigin
 	}
 	ok := c.Origin.Scheme == o.Scheme && (c.Origin.Host == o.Host || c.Origin.Host == net.JoinHostPort(o.Host, port))
 	if !ok {
-		log.Println("bad websocket origin:", o)
+		log.Println("2. bad websocket origin:", o)
 		//return websocket.ErrBadWebSocketOrigin
 	}
 	log.Println("accepting connection from:", req.RemoteAddr)
